@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ACP Envelope",
+  "description": "Standard message wrapper for all ACP messages",
+  "type": "object",
+  "required": ["spec", "id", "from", "to", "timestamp", "payload_type", "payload", "auth"],
+  "properties": {
+    "spec":         { "type": "string", "const": "acp/0.1" },
+    "id":           { "type": "string", "description": "Unique message ID (UUID)" },
+    "from":         { "type": "string", "description": "agID or namespace address of sender" },
+    "to":           { "type": "string", "description": "agID or namespace address of recipient" },
+    "timestamp":    { "type": "string", "format": "date-time" },
+    "payload_type": { "type": "string", "description": "Namespaced capability or message type" },
+    "payload":      { "type": "object" },
+    "auth":         { "type": "string", "description": "agToken or other auth assertion" },
+    "reply_to":     { "type": "string", "description": "Where to send the response" },
+    "thread_id":    { "type": "string", "description": "Groups related messages" },
+    "ttl":          { "type": "integer", "description": "Message expiry in seconds" },
+    "priority":     { "type": "string", "enum": ["low", "normal", "high"] },
+    "trace":        { "type": "array", "items": { "type": "string" }, "description": "Routing hop log" }
+  },
+  "additionalProperties": false
+}

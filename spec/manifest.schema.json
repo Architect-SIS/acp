@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ACP Manifest",
+  "description": "acp.json — published by every ACP-compatible agent at a discoverable location",
+  "type": "object",
+  "required": ["spec", "agent_name", "transport", "message_format", "capabilities", "routing"],
+  "properties": {
+    "spec":           { "type": "string", "const": "acp/0.1" },
+    "agent_name":     { "type": "string" },
+    "agID":           { "type": "string", "description": "agID from agAuth (recommended)" },
+    "transport":      { "type": "array", "items": { "type": "string", "enum": ["mcp", "http", "websocket"] } },
+    "message_format": { "type": "string", "const": "acp-envelope/0.1" },
+    "discovery": {
+      "type": "object",
+      "properties": {
+        "mode":          { "type": "string", "enum": ["manifest", "registry", "direct"] },
+        "manifest_path": { "type": "string" },
+        "registry":      { "type": "string" }
+      }
+    },
+    "connection_modes": { "type": "array", "items": { "type": "string", "enum": ["direct", "brokered", "federated"] } },
+    "auth_layer":       { "type": "string", "description": "Auth spec used in envelope auth field" },
+    "capabilities":     { "type": "array", "items": { "type": "string" }, "description": "List of payload_type values this agent accepts" },
+    "routing": {
+      "type": "object",
+      "required": ["address"],
+      "properties": {
+        "address":   { "type": "string" },
+        "namespace": { "type": "string" }
+      }
+    }
+  }
+}
