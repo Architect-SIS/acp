@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACP — Agent Connection Protocol</title>
+  <meta name="description" content="ACP is the open standard for agent-to-agent and agent-to-service communication. The transport layer for autonomous AI agents.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:   #0A1628;
+      --cyan:   #00C2FF;
+      --gold:   #FFB800;
+      --violet: #7B2FBE;
+      --slate:  #2C3E5A;
+      --cloud:  #F1F5F9;
+      --text:   #E8EEF5;
+      --muted:  #8FA3BE;
+      --mono:   'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+      --sans:   'Inter', 'Outfit', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--navy); color: var(--text); font-family: var(--sans); font-size: 16px; line-height: 1.6; min-height: 100vh; }
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+    nav { border-bottom: 1px solid rgba(0,194,255,.12); padding: 20px 0; }
+    nav .container { display: flex; align-items: center; justify-content: space-between; }
+    .wordmark { font-size: 13px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--violet); text-decoration: none; }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a { font-size: 13px; color: var(--muted); text-decoration: none; letter-spacing: .04em; transition: color .2s; }
+    .nav-links a:hover { color: var(--cyan); }
+    .hero { padding: 100px 0 80px; border-bottom: 1px solid rgba(0,194,255,.08); }
+    .badge { display: inline-block; font-family: var(--mono); font-size: 11px; color: var(--violet); background: rgba(123,47,190,.1); border: 1px solid rgba(123,47,190,.3); padding: 4px 12px; border-radius: 2px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 28px; }
+    h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 700; line-height: 1.1; letter-spacing: -.02em; color: #ffffff; margin-bottom: 8px; }
+    h1 span { color: var(--violet); }
+    .tagline { font-size: clamp(15px, 2vw, 18px); color: var(--muted); max-width: 580px; margin: 20px 0 40px; line-height: 1.7; }
+    .equation { font-family: var(--mono); font-size: 13px; color: var(--gold); letter-spacing: .08em; margin-bottom: 40px; }
+    .cta-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .btn { display: inline-block; padding: 12px 28px; font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; text-decoration: none; border-radius: 2px; transition: all .2s; }
+    .btn-primary { background: var(--violet); color: #fff; }
+    .btn-primary:hover { background: #9340D4; }
+    .btn-ghost { border: 1px solid rgba(123,47,190,.4); color: var(--violet); }
+    .btn-ghost:hover { border-color: var(--violet); background: rgba(123,47,190,.08); }
+    .code-block { background: rgba(255,255,255,.03); border: 1px solid rgba(0,194,255,.1); border-left: 3px solid var(--violet); border-radius: 3px; padding: 24px; margin: 48px 0; overflow-x: auto; }
+    pre { font-family: var(--mono); font-size: 13px; color: var(--text); line-height: 1.7; white-space: pre; }
+    .comment { color: var(--muted); }
+    .key     { color: var(--cyan); }
+    .str     { color: #7ED4B0; }
+    .section { padding: 72px 0; border-bottom: 1px solid rgba(0,194,255,.08); }
+    .section-label { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: .14em; text-transform: uppercase; margin-bottom: 16px; }
+    h2 { font-size: 28px; font-weight: 700; color: #ffffff; margin-bottom: 20px; letter-spacing: -.01em; }
+    p { color: var(--muted); line-height: 1.8; max-width: 600px; }
+    .stack-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(0,194,255,.08); border: 1px solid rgba(0,194,255,.08); border-radius: 3px; margin-top: 40px; overflow: hidden; }
+    .stack-item { background: var(--navy); padding: 28px 24px; }
+    .stack-item.active { background: rgba(123,47,190,.06); }
+    .stack-num { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: .1em; margin-bottom: 12px; }
+    .stack-name { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .stack-item.active .stack-name { color: var(--violet); }
+    .stack-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .stack-link { display: inline-block; margin-top: 12px; font-family: var(--mono); font-size: 11px; color: var(--cyan); text-decoration: none; letter-spacing: .06em; }
+    .stack-link:hover { text-decoration: underline; }
+    .payload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(0,194,255,.08); border: 1px solid rgba(0,194,255,.08); border-radius: 3px; margin-top: 32px; overflow: hidden; }
+    .payload-item { background: var(--navy); padding: 20px 24px; }
+    .payload-type { font-family: var(--mono); font-size: 13px; color: var(--cyan); margin-bottom: 6px; }
+    .payload-desc { font-size: 13px; color: var(--muted); }
+    .genesis-card { border: 1px solid rgba(123,47,190,.2); border-radius: 3px; padding: 32px; background: rgba(123,47,190,.04); }
+    .genesis-label { font-family: var(--mono); font-size: 11px; color: var(--gold); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 16px; }
+    .genesis-agid { font-family: var(--mono); font-size: 16px; color: var(--cyan); margin-bottom: 8px; }
+    .genesis-detail { font-size: 14px; color: var(--muted); margin-bottom: 4px; }
+    .genesis-detail a { color: var(--cyan); text-decoration: none; }
+    .genesis-detail a:hover { text-decoration: underline; }
+    footer { padding: 48px 0; }
+    .footer-top { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 32px; border-bottom: 1px solid rgba(0,194,255,.08); flex-wrap: wrap; gap: 24px; }
+    .footer-brand { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+    .footer-brand strong { color: var(--violet); }
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-links a { font-size: 13px; color: var(--muted); text-decoration: none; }
+    .footer-links a:hover { color: var(--cyan); }
+    .footer-bottom { padding-top: 24px; font-family: var(--mono); font-size: 11px; color: rgba(143,163,190,.4); letter-spacing: .06em; }
+    @media (max-width: 600px) { .stack-grid, .payload-grid { grid-template-columns: 1fr; } .nav-links { display: none; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a class="wordmark" href="https://github.com/Architect-SIS/acp">ACP</a>
+    <div class="nav-links">
+      <a href="https://github.com/Architect-SIS/acp/blob/main/spec/SPEC.md">Spec</a>
+      <a href="https://github.com/Architect-SIS/acp">GitHub</a>
+      <a href="https://github.com/Architect-SIS/agauth">agAuth →</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <div class="badge">Draft v0.1 — Open Standard</div>
+    <h1>Agent <span>Connection</span><br>Protocol</h1>
+    <p class="tagline">
+      AI agents cannot talk to each other in any standardized way.
+      Every platform has a custom connection model. Every integration requires custom code.
+      ACP is the SMTP for agents — a minimal envelope and handshake that any runtime can implement in an afternoon.
+    </p>
+    <div class="equation">ΣΔ = 0 &nbsp;—&nbsp; BCOL / DeltaZero</div>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://github.com/Architect-SIS/acp/blob/main/spec/SPEC.md">Read the Spec</a>
+      <a class="btn btn-ghost" href="https://github.com/Architect-SIS/agauth">agAuth (Identity Layer)</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-label">01 — Architecture</div>
+    <h2>The transport layer for autonomous agents.</h2>
+    <p>ACP defines the envelope, not the pipe. It runs over HTTP, MCP, or WebSocket. It requires an auth field but doesn't mandate a specific auth method — agAuth is the recommended layer.</p>
+
+    <div class="stack-grid">
+      <div class="stack-item">
+        <div class="stack-num">01 / SECURITY</div>
+        <div class="stack-name">AgentAudit</div>
+        <div class="stack-desc">Is this agent safe? Security audit registry.</div>
+        <a class="stack-link" href="https://agentaudit.dev" target="_blank">agentaudit.dev ↗</a>
+      </div>
+      <div class="stack-item">
+        <div class="stack-num">02 / IDENTITY</div>
+        <div class="stack-name">agAuth</div>
+        <div class="stack-desc">Is this agent who it claims? Cryptographic identity.</div>
+        <a class="stack-link" href="https://github.com/Architect-SIS/agauth">spec →</a>
+      </div>
+      <div class="stack-item active">
+        <div class="stack-num">03 / TRANSPORT</div>
+        <div class="stack-name">ACP</div>
+        <div class="stack-desc">How do agents communicate? Standard envelope and handshake.</div>
+        <a class="stack-link" href="https://github.com/Architect-SIS/acp">spec →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-label">02 — The Envelope</div>
+    <h2>One format. Every transport.</h2>
+    <p>Any ACP message — regardless of transport — uses the same envelope. Routing, auth, threading, and payload type in a single structure.</p>
+
+    <div class="code-block">
+      <pre>{
+  <span class="key">"spec"</span>:         <span class="str">"acp/0.1"</span>,
+  <span class="key">"id"</span>:           <span class="str">"msg-uuid"</span>,
+  <span class="key">"from"</span>:         <span class="str">"ag-4f8a2c1b-000001-9e3d"</span>,
+  <span class="key">"to"</span>:           <span class="str">"ag-7b3c9d2e-000042-ff1a"</span>,
+  <span class="key">"timestamp"</span>:    <span class="str">"2026-02-12T00:00:00Z"</span>,
+  <span class="key">"payload_type"</span>: <span class="str">"acp:invoke"</span>,
+  <span class="key">"payload"</span>:      { },
+  <span class="key">"auth"</span>:         <span class="str">"agtoken_here"</span>
+}</pre>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-label">03 — Payload Types</div>
+    <h2>Base vocabulary. Infinitely extensible.</h2>
+    <p>ACP defines a base set of payload types. Services and agents extend with namespaced types: <code style="font-family:var(--mono);color:var(--cyan);font-size:13px">{namespace}:{action}</code></p>
+
+    <div class="payload-grid">
+      <div class="payload-item">
+        <div class="payload-type">acp:ping</div>
+        <div class="payload-desc">Liveness check</div>
+      </div>
+      <div class="payload-item">
+        <div class="payload-type">acp:pong</div>
+        <div class="payload-desc">Response to ping</div>
+      </div>
+      <div class="payload-item">
+        <div class="payload-type">acp:discover</div>
+        <div class="payload-desc">Request capability manifest</div>
+      </div>
+      <div class="payload-item">
+        <div class="payload-type">acp:manifest</div>
+        <div class="payload-desc">Return capability manifest</div>
+      </div>
+      <div class="payload-item">
+        <div class="payload-type">acp:invoke</div>
+        <div class="payload-desc">Invoke a declared capability</div>
+      </div>
+      <div class="payload-item">
+        <div class="payload-type">acp:result</div>
+        <div class="payload-desc">Response to invocation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-label">04 — Genesis Implementation</div>
+    <h2>First production deployment.</h2>
+    <p>The ACP genesis package is <strong style="color:#fff">sis-skill</strong> — the Sovereign Intelligence System built on BCOL / DeltaZero.</p>
+    <br>
+    <div class="genesis-card">
+      <div class="genesis-label">⬡ Genesis Package — ag-4f8a2c1b-000001-9e3d</div>
+      <div class="genesis-agid">ag-4f8a2c1b-000001-9e3d</div>
+      <div class="genesis-detail">Package: <a href="https://github.com/Architect-SIS/sis-skill" target="_blank">Architect-SIS/sis-skill ↗</a></div>
+      <div class="genesis-detail">Transport: MCP, HTTP</div>
+      <div class="genesis-detail">Auth layer: agauth/0.1</div>
+      <div class="genesis-detail">Framework: BCOL / DeltaZero (ΣΔ = 0)</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <strong>ACP</strong> — Agent Connection Protocol<br>
+        An open standard by <strong>Fabricated Industries LLC</strong><br>
+        Framework: BCOL / DeltaZero — ΣΔ = 0
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/Architect-SIS/acp/blob/main/spec/SPEC.md">Spec</a>
+        <a href="https://github.com/Architect-SIS/acp">GitHub</a>
+        <a href="https://github.com/Architect-SIS/agauth">agAuth</a>
+        <a href="https://github.com/Architect-SIS/sis-skill">sis-skill</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      DRAFT v0.1 — MIT LICENSE — COPYRIGHT 2026 FABRICATED INDUSTRIES LLC
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
